@@ -1,25 +1,19 @@
-import collections
-import decimal
-import fractions
-import typing
-
-
-def get_max_and_min(data: typing.Set[typing.Union[decimal.Decimal, float,
+def get_max_and_min(data: typing.Set[typing.Union[decimal.Decimal,
                                                   fractions.Fraction]]) -> collections.namedtuple:
     """Get a set of float(ex: 231.2312) and str data("1 \ 5" or "3.00000003") ->
      return namedtuple with attribute .max_value and .min_value """
     buff = list()
     for el in data:
-        if type(el) is float:
+        if isinstance(el, float):
             buff.append(el)
-        elif type(el) is str:
-            if collections.Counter(el).get('\\') == 1:
+        elif isinstance(el, str):
+            if '\\' in el:
                 numerator_and_denominator = el.split('\\')
                 num = fractions.Fraction(
                     int(numerator_and_denominator[0].strip()),
                     int(numerator_and_denominator[1].strip()))
                 buff.append(num)
-            elif collections.Counter(el).get('.') == 1:
+            elif '.' in el:
                 num = decimal.Decimal(el)
                 buff.append(num)
             else:
@@ -33,21 +27,20 @@ def get_max_and_min(data: typing.Set[typing.Union[decimal.Decimal, float,
     result = min_max_tuple(max_val, min_val)
     return result
 
-
-if __name__ == '__main__':
-    data = {
-        1.21312,
-        32.231,
-        23.41,
-        1.0,
-        "1 \ 4",
-        "1 \\ 2",
-        "1 \ 1",
-        "20.13",
-        "23.231",
-        "100.00",
-        "131.123",
-    }
-    test = get_max_and_min(data)
-    print(test.min_value)
-    print(test.max_value)
+# if __name__ == '__main__':
+#     data = {
+#         1.21312,
+#         32.231,
+#         23.41,
+#         1.0,
+#         "1 \ 4",
+#         "1 \\ 2",
+#         "1 \ 1",
+#         "20.13",
+#         "23.231",
+#         "100.00",
+#         "131.123",
+#     }
+#     test = get_max_and_min(data)
+#     print(test.min_value)
+#     print(test.max_value)
