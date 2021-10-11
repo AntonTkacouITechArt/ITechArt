@@ -12,26 +12,25 @@ def validate_data(data: dict) -> bool:
     int type """
     for student_name, dt_student in data.items():
 
-        if isinstance(student_name, str):
+        if not isinstance(student_name, str):
             raise TypeError
 
         for obj_name, marks in dt_student.items():
-            if isinstance(obj_name, str):
+            if not isinstance(obj_name, str):
                 raise TypeError
 
             for el in marks:
-                if isinstance(el, int):
+                if not isinstance(el, int):
                     raise TypeError
-                elif el < 1 or el > 10:
+                elif 1 <= el <= 10:
                     raise ValueError
                 else:
                     pass
 
-            for letter in obj_name:
-                if ord(letter) < 65 or ord(letter) > 122:
-                    raise ValueError
-
-        for letter in student_name:
-            if ord(letter) < 65 or ord(letter) > 122:
+            if not obj_name.isalpha():
                 raise ValueError
+
+        if not student_name.isalpha():
+            raise ValueError
+
     return True
