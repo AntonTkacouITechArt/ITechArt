@@ -4,14 +4,17 @@ import typing
 
 @dataclasses.dataclass(order=True)
 class Student:
-    name: str = dataclasses.field(repr=True)
+    name: str = dataclasses.field(repr=True, compare=False)
     first_letter: str = dataclasses.field(init=False,
-                                          repr=False)
+                                          repr=False,
+                                          compare=False)
     average_mark: float = dataclasses.field(compare=True,
                                             repr=True)
-    age: int = dataclasses.field(default=18, repr=False)
+    age: int = dataclasses.field(default=18, repr=False,
+                                 compare=False)
     subjects: typing.List[str] = dataclasses.field(default_factory=list,
-                                                   repr=False)
+                                                   repr=False,
+                                                   compare=False)
 
     def __post_init__(self):
         if self.name == '':
