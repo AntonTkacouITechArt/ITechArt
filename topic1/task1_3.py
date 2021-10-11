@@ -7,6 +7,7 @@ class FibIterator:
 
     def __next__(self):
         if self.counter < self.limit:
+            self.counter += 1
             buff1 = self.prev
             buff2 = self.next
             self.next += self.prev
@@ -14,6 +15,12 @@ class FibIterator:
             return buff1
         else:
             raise StopIteration
+
+    def __iter__(self):
+        self.counter = 0
+        self.prev = 0
+        self.next = 1
+        return self
 
 
 def fib_generator():
@@ -38,4 +45,5 @@ def strange_decorator(func):
         if type(a) is int:
             a += 13
         return a
+
     return wrapper
