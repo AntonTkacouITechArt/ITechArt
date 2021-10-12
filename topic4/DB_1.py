@@ -178,121 +178,154 @@ class SQLManager:
             print("You input incorrect number, try again!")
 
     def select_1(self):
-        data = self.cur.execute("""
+        self.cur.execute("""
             SELECT * FROM Items
-            WHERE description NOT NULL;
-        """).fetchall()
+            WHERE description IS NOT NULL;
+        """)
+        data = self.cur.fetchall()
+        print(data)
         return data
 
     def select_2(self):
-        data = self.cur.execute("""
+        self.cur.execute("""
                     SELECT DISTINCT sphere FROM Departments
                     WHERE staff_amount > 200;
-                """).fetchall()
+                """)
+        data = self.cur.fetchall()
+        print(data)
         return data
 
-    # check 50/50
     def select_3(self):
-        data = self.cur.execute("""
+        self.cur.execute("""
                     SELECT address FROM Shops
                     WHERE name ~ '^(I|i)';
-                """).fetchall()
+                """)
+        data = self.cur.fetchall()
+        print(data)
         return data
 
     def select_4(self):
-        data = self.cur.execute("""
+        self.cur.execute("""
                     SELECT Items.name FROM Items
-                    INNER JOIN Departments ON Departments.id == Items.department_id
+                    INNER JOIN Departments ON Departments.id = Items.department_id
                     WHERE Departments.sphere = 'Furniture';
-                """).fetchall()
+                """)
+        data = self.cur.fetchall()
+        print(data)
         return data
 
     def select_5(self):
-        data = self.cur.execute("""
+        self.cur.execute("""
                     SELECT Shops.name FROM Shops
                     INNER JOIN Departments ON Departments.shop_id = Shops.id
                     INNER JOIN Items ON Items.department_id = Departments.id
-                    WHERE Items.description NOT NULL;
-                """).fetchall()
+                    WHERE Items.description IS NOT NULL;
+                """)
+        data = self.cur.fetchall()
+        print(data)
         return data
 
     # no query, just think
     def select_6(self):
-        pass
+        self.cur.execute("""
+            SELECT 
+                Items.name, description, price,
+                'department_' || sphere AS dep_sphere,
+                'department_' || Departments.staff_amount AS dep_staff,
+                'shop_' || Shops.name AS shop_name,
+                'shop_' || address AS shop_addr, 
+                'shop_' || Shops.staff_amount as shop_staff
+            FROM Items
+            INNER JOIN Departments ON Departments.id = Items.department_id
+            INNER JOIN Shops ON Shops.id = Departments.shop_id;
+        """)
+        data = self.cur.fetchall()
+        print(data)
+        return data
 
     def select_7(self):
-        data = self.cur.execute("""
+        self.cur.execute("""
                     SELECT id FROM Items
                     ORDER BY name
                     LIMIT 2
                     OFFSET 3;
-                """).fetchall()
+                """)
+        data = self.cur.fetchall()
+        print(data)
         return data
 
     def select_8(self):
-        data = self.cur.execute("""
+        self.cur.execute("""
                             SELECT Items.name, Shops.name FROM Items
                             INNER JOIN Departments ON Items.department_id = Departments.id
-                            INNER JOIN Shops ON Shops.id = Departments.shops_id;
-                        """).fetchall()
+                            INNER JOIN Shops ON Shops.id = Departments.shop_id;
+                        """)
+        data = self.cur.fetchall()
+        print(data)
         return data
 
     def select_9(self):
-        data = self.cur.execute("""
-                            SELECT Items.name, Shops.name FROM Items
+        self.cur.execute("""
+                            SELECT Items.name, Departments.id FROM Items
                             LEFT JOIN Departments ON Items.department_id = Departments.id
-                            INNER JOIN Shops ON Shops.id = Departments.shop_id;
-                    """).fetchall()
+                    """)
+        data = self.cur.fetchall()
+        print(data)
         return data
 
-    # check
     def select_10(self):
-        data = self.cur.execute("""
-                            SELECT Items.name, Shops.name FROM Items
+        self.cur.execute("""
+                            SELECT Items.name, Departments.id FROM Items
                             RIGHT JOIN Departments ON Items.department_id = Departments.id
-                            INNER JOIN Shops ON Shops.id = Departments.shop_id;
-                        """).fetchall()
+                        """)
+        data = self.cur.fetchall()
+        print(data)
         return data
 
-    # check
     def select_11(self):
-        data = self.cur.execute("""
-                            SELECT Items.name, Shops.name FROM Items
+        self.cur.execute("""
+                            SELECT Items.name, Departments.id FROM Items
                             FULL JOIN Departments ON Items.department_id = Departments.id
-                            INNER JOIN Shops ON Shops.id = Departments.shop_id;
-                    """).fetchall()
+                    """)
+        data = self.cur.fetchall()
+        print(data)
         return data
 
-    # check
     def select_12(self):
-        data = self.cur.execute("""
+        self.cur.execute("""
                             SELECT Items.name, Shops.name FROM Items
                             CROSS JOIN Departments
                             INNER JOIN Shops ON Shops.id = Departments.shop_id;
-                    """).fetchall()
+                    """)
+        data = self.cur.fetchall()
+        print(data)
         return data
 
     def select_13(self):
-        data = self.cur.execute("""
+        self.cur.execute("""
                 SELECT Shops.name, COUNT(*) as count_goods, SUM(price),
                 MAX(price), MIN(price),
                 AVG(price) FROM Items
                 INNER JOIN Departments ON Departments.id = Items.department_id
                 INNER JOIN Shops ON Shops.id = Departments.shop_id
                 GROUP BY (Shops.name);
-                    """).fetchall()
+                    """)
+        data = self.cur.fetchall()
+        print(data)
         return data
 
     # check stucture creating
     def select_14(self):
-        data = self.cur.execute("""
+        self.cur.execute("""
                         SELECT Shops.name, Items.name FROM Items
                         INNER JOIN Departments ON Departments.id = Items.department_id
                         INNER JOIN Shops ON Shops.id = Departments.shop_id;
-                    """).fetchall()
+                    """)
+        data = self.cur.fetchall()
         new_data = {}
         for el in data:
             new_data.setdefault(el[0], []).append(el[1])
+        print(new_data)
         return new_data
 
     # UPDATE METHOD
@@ -308,17 +341,15 @@ class SQLManager:
 
     # DELETE METHODS
 
-    def switch_delete_menu(self):
+    def switch_delete_menu(self, choice):
         """Delete menu"""
         if choice == 1:
-            pass
-        elif choice == 2:
             self.delete_1()
         elif choice == 2:
             self.delete_2()
-        elif choice == 2:
+        elif choice == 3:
             self.delete_3()
-        elif choice == 2:
+        elif choice == 4:
             self.delete_4()
         else:
             print("You input incorrect number, try again!")
@@ -344,21 +375,23 @@ class SQLManager:
         self.__commit()
         print("You are successfully delete data from tables")
 
-
-	# add methods edit this method
     def delete_3(self):
         self.cur.execute("""
             DELETE FROM Items
-            WHERE price > 500 AND description IS NULL;
+            WHERE Items.id IN (
+                SELECT id FROM Departments
+                WHERE staff_amount < 225 
+                OR staff_amount > 275
+            );
         """)
         self.__commit()
         print("You are successfully delete data from tables")
 
     def delete_4(self):
         self.cur.execute("""
-            TRUNCATE TABLE Shops;
-            TRUNCATE TABLE Departments;
-            TRUNCATE TABLE Items;
+            TRUNCATE TABLE Shops CASCADE;
+            TRUNCATE TABLE Departments CASCADE;
+            TRUNCATE TABLE Items CASCADE;
         """)
         self.__commit()
         print("You are successfully delete data from tables")
@@ -375,8 +408,8 @@ class SQLManager:
         except (Exception, Error) as error:
             print("Error with work with PostgreSQL", error)
 
+    # STATIC FUNC
 
-# STATIC FUNC
 
 def select_menu():
     """Function menu"""
@@ -413,40 +446,53 @@ def select_menu():
     print("Выйти из меню select нажмите 0")
 
 
-# add menu
 def delete_menu():
-    pass
+    print("""5.1) Все товары, у которых цена больше 500 и у которых нет описания.""")
+    print('5.2) Все товары, у которых магазин не имеет адреса.')
+    print('5.3) Все товары, у которых id совпадает с id отделов, имеющих менее 225 или более 275 cотрудников.')
+    print('5.4) Все данные из всех трех таблиц.')
+
+    # TEST FUNC
 
 
-sql1 = SQLManager(dbname="test", db_user="postgres", password="507733",
-                  hostname="127.0.0.1")
-sql1.connect_to_db()
-sql1.create_table()
-sql1.insert_data()
-while True:
-    select_menu()
-    try:
-        choice = int(input("Input number > ..."))
-        if choice == 0:
-            break
-        else:
-            sql1.switcher_select_menu(choice)
-    except Exception as error:
-        print(f"{error}")
+def select_test():
+    global sql1
+    while True:
+        select_menu()
+        try:
+            choice = int(input("Input number > ..."))
+            if choice == 0:
+                break
+            else:
+                sql1.switcher_select_menu(choice)
+        except Exception as error:
+            print(f"{error}")
 
-while True:
-    delete_menu()
-    try:
-        choice = int(input("Input number > ..."))
-        if choice == 0:
-            break
-        else:
-            sql1.switcher_delete_menu(choice)
-    except Exception as error:
-        print(f"{error}")
 
-x = input('Pause press any key to continue ....')
-sql1.update_data()
-x = input('Pause press any key to continue ....')
-# sql1.drop_table()
-sql1.disconnect_from_db()
+def delete_test():
+    global sql1
+    while True:
+        delete_menu()
+        try:
+            choice = int(input("Input number > ..."))
+            if choice == 0:
+                break
+            else:
+                sql1.switch_delete_menu(choice)
+        except Exception as error:
+            print(f"{error}")
+
+
+if __name__ == '__main__':
+    sql1 = SQLManager(dbname="test", db_user="postgres", password="1111", hostname="127.0.0.1")
+    sql1.connect_to_db()
+    sql1.create_table()
+    sql1.insert_data()
+    select_test()
+    x = input('Pause press any key to continue ....')
+    sql1.update_data()
+    x = input('Pause press any key to continue ....')
+    delete_test()
+    x = input('Pause press any key to continue ....')
+    sql1.drop_table()
+    sql1.disconnect_from_db()
